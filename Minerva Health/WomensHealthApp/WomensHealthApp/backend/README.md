@@ -18,11 +18,12 @@ Make sure the `backend` folder (and the rest of the repo) is pushed to GitHub (o
 
 ### 3. Add the backend service
 
-- In the same project: **New** → **GitHub Repo** (or **Empty Service** if you’ll connect repo later).
-- If you deploy from a **monorepo** (e.g. Minerva Health repo with an Xcode app + `backend` folder):
-  - Select the repo and branch.
-  - In the backend service: **Settings** → **Root Directory** → set to **`Minerva Health/WomensHealthApp/WomensHealthApp/backend`** (or wherever your `backend` folder lives relative to the repo root). Adjust the path if your repo layout is different.
-- If the **whole repo is only the backend** (e.g. you copied `backend` into its own repo), leave Root Directory blank.
+- In the same project: **New** → **Deploy from GitHub** → select **BrennonD18/minerva-health** (and branch **main**).
+- **Important:** In the new service, open **Settings** → **Source** (or **General**) and set **Root Directory** to:
+  ```text
+  Minerva Health/WomensHealthApp/WomensHealthApp/backend
+  ```
+  That way Railway builds only the Node backend (and uses the `Dockerfile` there), not the whole repo. If your repo layout is different, set it to the folder that contains `package.json` and `Dockerfile`.
 
 ### 4. Link Postgres and set variables
 
@@ -31,22 +32,11 @@ Make sure the `backend` folder (and the rest of the repo) is pushed to GitHub (o
 - Add:
   - **JWT_SECRET** – any long random string (e.g. 32+ characters). You can generate one at [randomkeygen.com](https://randomkeygen.com) or use a password generator.
 
-### 5. Build and start commands
+### 5. Build (Dockerfile)
 
-In the backend service → **Settings**:
+The backend folder includes a **Dockerfile**. Once **Root Directory** is set to the backend folder, Railway will detect it and build with Docker. No need to set custom build or start commands—the Dockerfile handles install, Prisma generate, build, and on start it runs `prisma db push` then the server.
 
-- **Build Command:**
-  ```bash
-  npm install && npx prisma generate && npx prisma db push && npm run build
-  ```
-  This installs deps, generates Prisma client, creates/updates tables in Postgres, and compiles TypeScript.
-
-- **Start Command:**
-  ```bash
-  npm start
-  ```
-
-- **Watch Paths** (optional): set to `backend` or the path to your backend folder so only backend changes trigger a redeploy.
+If Railway does not use the Dockerfile automatically, in **Settings** → **Build** set **Builder** to **Dockerfile** (if available).
 
 ### 6. Deploy
 
