@@ -3,7 +3,9 @@ FROM node:20-slim
 
 WORKDIR /app
 
+# Copy package and Prisma schema first so postinstall (prisma generate) can run
 COPY package.json ./
+COPY prisma ./prisma/
 RUN npm install
 
 COPY . .
