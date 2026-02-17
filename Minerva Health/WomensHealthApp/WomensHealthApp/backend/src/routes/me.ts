@@ -4,13 +4,12 @@ import { authMiddleware, JwtPayload } from "../middleware/auth";
 
 const router = Router();
 
-router.use(authMiddleware);
-
 // GET /me – Current user (requires Authorization: Bearer <token>)
-router.get("/", async (req: Request & { user: JwtPayload }, res: Response): Promise<void> => {
+router.get("/", authMiddleware, async (req, res): Promise<void> => {
   try {
+    const { userId } = (req as Request & { user: JwtPayload }).user;
     const user = await prisma.user.findUnique({
-      where: { id: req.user.userId },
+      where: { id: userId },
       select: { id: true, appleId: true, email: true, name: true, createdAt: true, updatedAt: true },
     });
     if (!user) {
