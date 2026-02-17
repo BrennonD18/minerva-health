@@ -13,10 +13,31 @@ struct SettingsView: View {
     @State private var showingPersonalitySettings = false
     @State private var showingBackupConfirmation = false
     @StateObject private var healthKit = HealthKitManager.shared
-    
+    @ObservedObject private var auth = AuthManager.shared
+
     var body: some View {
         NavigationStack {
             List {
+                // Account
+                Section {
+                    if let user = auth.currentUser {
+                        if let name = user.name, !name.isEmpty {
+                            LabeledContent("Name", value: name)
+                        }
+                        if let email = user.email, !email.isEmpty {
+                            LabeledContent("Email", value: email)
+                        }
+                    }
+                    Button(role: .destructive, action: {
+                        Haptics.selection()
+                        auth.logout()
+                    }) {
+                        Text("Sign out")
+                    }
+                } header: {
+                    Text("Account")
+                }
+
                 // Apple Health
                 if healthKit.isHealthDataAvailable {
                     Section {

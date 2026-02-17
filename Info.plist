@@ -20,6 +20,8 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>GIDClientID</key>
+	<string>com.googleusercontent.apps.100936325816-aeff611ueittmnd9dho9ndirapnf1n1a</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSHealthShareUsageDescription</key>
@@ -28,6 +30,17 @@
 	<string>If you connect your health records, Minerva Health can use them to give you more personalized cycle and wellness insights—only when you choose to share.</string>
 	<key>NSUserTrackingUsageDescription</key>
 	<string>We use this to provide personalized insights for your health journey.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.YOUR_CLIENT_ID_NUMBER</string>
+			</array>
+		</dict>
+	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

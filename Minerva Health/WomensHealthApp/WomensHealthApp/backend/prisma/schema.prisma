@@ -11,12 +11,14 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  appleId   String?  @unique @map("apple_id")   // Sign in with Apple user identifier
-  email     String?  @db.VarChar(255)
-  name      String?  @db.VarChar(255)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id           String   @id @default(cuid())
+  appleId      String?  @unique @map("apple_id")   // Sign in with Apple user identifier
+  googleId     String?  @unique @map("google_id")  // Google Sign-In user identifier (sub)
+  email        String?  @unique @db.VarChar(255)   // Unique for email/password sign-in
+  passwordHash String?  @map("password_hash")      // Only set for email/password accounts
+  name         String?  @db.VarChar(255)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
   @@map("users")
 }

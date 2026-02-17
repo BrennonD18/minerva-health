@@ -100,10 +100,11 @@ final class HealthKitManager: ObservableObject {
         let start = calendar.startOfDay(for: date)
         let end = calendar.date(byAdding: .day, value: 1, to: start)!
 
-        let value: HKCategoryValueMenstrualFlow = flow?.hkValue ?? .unspecified
+        // Menstrual flow category raw values: 0=unspecified, 1=light, 2=medium, 3=heavy
+        let value = flow?.hkCategoryValue ?? 0
         let sample = HKCategorySample(
             type: type,
-            value: value.rawValue,
+            value: value,
             start: start,
             end: end
         )
@@ -143,9 +144,10 @@ final class HealthKitManager: ObservableObject {
         let start = calendar.startOfDay(for: date)
         let end = calendar.date(byAdding: .day, value: 1, to: start)!
 
+        // Category value 0 = unspecified (HKCategoryValueSexualActivity removed in newer SDKs)
         let sample = HKCategorySample(
             type: type,
-            value: HKCategoryValueSexualActivity.unspecified.rawValue,
+            value: 0,
             start: start,
             end: end
         )
@@ -180,11 +182,12 @@ final class HealthKitManager: ObservableObject {
 // MARK: - FlowHeaviness → HealthKit
 
 private extension FlowHeaviness {
-    var hkValue: HKCategoryValueMenstrualFlow {
+    /// HealthKit menstrual flow category raw values: 1=light, 2=medium, 3=heavy
+    var hkCategoryValue: Int {
         switch self {
-        case .light: return .light
-        case .medium: return .medium
-        case .heavy: return .heavy
+        case .light: return 1
+        case .medium: return 2
+        case .heavy: return 3
         }
     }
 }

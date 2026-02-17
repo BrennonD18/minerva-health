@@ -9,17 +9,24 @@ import SwiftUI
 
 @main
 struct WomensHealthApp: App {
+    @StateObject private var auth = AuthManager.shared
     @StateObject private var dataManager = DataManager()
     @StateObject private var aiCompanion = AICompanionManager()
-    
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environmentObject(dataManager)
-                .environmentObject(aiCompanion)
-                .onAppear {
-                    HealthKitManager.shared.refreshAuthorizationStatus()
+            Group {
+                if auth.isLoggedIn {
+                    ContentView()
+                        .environmentObject(dataManager)
+                        .environmentObject(aiCompanion)
+                } else {
+                    LoginView()
                 }
+            }
+            .onAppear {
+                HealthKitManager.shared.refreshAuthorizationStatus()
+            }
         }
     }
 }
