@@ -1,0 +1,66 @@
+---
+description: Add haptic feedback to new interactive UI to match the rest of the app
+globs: "**/*.swift"
+alwaysApply: false
+---
+
+# Haptic Feedback for New UI
+
+When adding **any new interactive element** in this app, trigger the matching haptic so it feels consistent with the rest of the app.
+
+## Use `Haptics` (see Haptics.swift)
+
+| Interaction | Use |
+|-------------|-----|
+| **Buttons** (including toolbar, alert actions, sheet actions) | Call `Haptics.selection()` at the **start** of the action closure |
+| **Tap gestures** (`.onTapGesture`) | Call `Haptics.selection()` inside the gesture closure |
+| **Pull-to-refresh** (`.refreshable { }`) | Call `Haptics.refresh()` at the start of the async closure |
+| **Tab / segment / picker selection change** | Call `Haptics.selection()` in `.onChange(of: value)` |
+| **Picker / wheel / scroll-to-select** | Add `.onChange(of: selection) { _, _ in Haptics.selection() }` so scrolling the value gives haptic |
+| **Toggle** | Call `Haptics.selection()` inside the existing `.onChange(of: ...)` for the binding |
+| **Success** (e.g. save completed, backup done) | Call `Haptics.success()` after the operation |
+
+## Examples
+
+**New button:**
+```swift
+Button(action: { Haptics.selection(); doSomething() }) {
+    Text("Action")
+}
+```
+
+**New tappable view:**
+```swift
+SomeView()
+    .onTapGesture { Haptics.selection(); handleTap() }
+```
+
+**New refreshable list/scroll:**
+```swift
+ScrollView { ... }
+    .refreshable {
+        Haptics.refresh()
+        await loadData()
+    }
+```
+
+**Reusable component with action closure:** call `Haptics.selection()` before invoking the action:
+```swift
+Button(action: { Haptics.selection(); action() }) { ... }
+```
+
+**Picker / wheel / segmented control** (scroll or tap to change value):
+```swift
+Picker("Label", selection: $value) { ... }
+    .onChange(of: value) { _, _ in Haptics.selection() }
+```
+
+**Toggle** (in the existing `.onChange` for the binding):
+```swift
+.onChange(of: dataManager.settings.someToggle) { _, _ in
+    Haptics.selection()
+    dataManager.saveData()
+}
+```
+
+Do **not** add haptics to non-interactive UI (e.g. plain `Text`, `Image`).

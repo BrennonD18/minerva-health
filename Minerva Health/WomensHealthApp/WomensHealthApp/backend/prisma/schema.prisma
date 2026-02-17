@@ -1,0 +1,22 @@
+// Minerva Health – PostgreSQL schema
+// Run: npx prisma db push  (or prisma migrate dev)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  appleId   String?  @unique @map("apple_id")   // Sign in with Apple user identifier
+  email     String?  @db.VarChar(255)
+  name      String?  @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
